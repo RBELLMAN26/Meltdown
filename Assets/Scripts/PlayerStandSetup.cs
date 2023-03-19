@@ -19,7 +19,7 @@ public class PlayerStandSetup : MonoBehaviour
 
     public void SpawnPlayer()
     {
-        Transform tempPlayer = Instantiate(player, GetRandPlayerStand().position + (Vector3.up * 0.5f), player.rotation);
+        Transform tempPlayer = Instantiate(player, GetRandPlayerStand().position + (Vector3.up * 0.6f), player.rotation);
     }
 
     public Transform GetRandPlayerStand()

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Rotator : MonoBehaviour
 {
+    AudioSource countdownAudio;
     bool startCountdown;
     float countdown = 3;
     [SerializeField] float rotationSpeed;
@@ -13,6 +14,7 @@ public class Rotator : MonoBehaviour
 
     private void OnEnable()
     {
+        countdownAudio = GetComponent<AudioSource>();
         GameManager.startGameEvent += StartGame;
     }
 
@@ -25,9 +27,12 @@ public class Rotator : MonoBehaviour
     void Update()
     {
         if (startCountdown)
-        {
+        { 
             if(countdown > 0)
             {
+                if (Time.timeScale == 0) countdownAudio.Pause();
+                else countdownAudio.UnPause();
+                
                 countdown -= Time.deltaTime;
             }
             else
@@ -53,7 +58,7 @@ public class Rotator : MonoBehaviour
     void StartGame()
     {
         startCountdown = true;
-        GetComponent<AudioSource>().Play();
+        countdownAudio.Play();
     }
 
     void Rotate()

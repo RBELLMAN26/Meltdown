@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody rb;
     [SerializeField] Transform cameraPosition;
     [SerializeField] LayerMask collisionLayer;
-    CapsuleCollider capsuleCollider;
+    [SerializeField] Transform ragdollSkeleton;
 
     private void Awake()
     {
@@ -33,8 +33,30 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Transform target = FindObjectOfType<Rotator>().transform;
         transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
-        capsuleCollider = GetComponent<CapsuleCollider>();
         SetupCamera();
+        ToggleRagdoll(false);
+    }
+
+    //Assign Player Input
+    private void OnEnable()
+    {
+        jumpInput.performed += Jump;
+        jumpInput.canceled += Jump;
+        crouchInput.performed += Crouch;
+        crouchInput.canceled += Crouch;
+        jumpInput.Enable();
+        crouchInput.Enable();
+    }
+
+    //UnAssign Player Input
+    private void OnDisable()
+    {
+        jumpInput.performed -= Jump;
+        crouchInput.performed -= Crouch;
+        jumpInput.canceled -= Jump;
+        crouchInput.canceled -= Crouch;
+        jumpInput.Disable();
+        crouchInput.Disable();
     }
 
     private void Update()
@@ -61,28 +83,6 @@ public class PlayerController : MonoBehaviour
                 rb.useGravity = true;
             }
         }
-    }
-
-    //Assign Player Input
-    private void OnEnable()
-    {
-        jumpInput.performed += Jump;
-        jumpInput.canceled += Jump;
-        crouchInput.performed += Crouch;
-        crouchInput.canceled += Crouch;
-        jumpInput.Enable();
-        crouchInput.Enable();
-    }
-
-    //UnAssign Player Input
-    private void OnDisable()
-    {
-        jumpInput.performed -= Jump;
-        crouchInput.performed -= Crouch;
-        jumpInput.canceled -= Jump;
-        crouchInput.canceled -= Crouch;
-        jumpInput.Disable();
-        crouchInput.Disable();
     }
 
     //When Character Spawns,  Have camera focus on Player
@@ -144,11 +144,12 @@ public class PlayerController : MonoBehaviour
         return transform.position.y >= jumpHeight;
     }
 
-    private void OnTriggerEnter(Collider other)
+    void ToggleRagdoll(bool isOn)
     {
-        if(other.CompareTag("GameOver"))
-        {
-            GameManager.instance.GameOver();
+        foreach(Rigidbody rigidbody in ragdollSkeleton.GetComponentsInChildren<Rigidbody>()) {
+            rigidbody.GetComponent<Collider>().enabled = isOn;
+            rigidbody.useGravity = isOn;
+            rigidbody.isKinematic = !isOn;
         }
     }
     
@@ -157,7 +158,11 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Bars"))
         {
             playerAnim.enabled = false;
-            //capsuleCollider.enabled = false;
+            foreach(var collider in GetComponents<Collider>())
+            {
+                collider.enabled = false;
+            }
+            ToggleRagdoll(true);
         }
     }
 }
