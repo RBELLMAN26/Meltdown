@@ -69,6 +69,18 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+<<<<<<< HEAD
+=======
+    "com.unity.recorder": {
+      "version": "3.0.3",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.timeline": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+>>>>>>> aef682e... Updated Ignore File | Updated Packages
     "com.unity.settings-manager": {
       "version": "1.0.3",
       "depth": 2,
